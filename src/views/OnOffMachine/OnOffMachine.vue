@@ -296,7 +296,7 @@ export default {
         let station = {};
         station.WorkStationId = iterator.WorkStationId;
         station.SelectWorkStationId = selectWorkStationId;
-        station.PositionId = iterator.PositionId;
+        station.PositionId = this.positionId;
         loginStations.push(station);
       }
       console.log("上机参数", loginStations);
