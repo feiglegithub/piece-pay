@@ -1,0 +1,66 @@
+.g-flex{
+  display:flex;
+  &.flex-vertical{
+    flex-direction: column;
+    height:100%
+  }
+  .flexwrap{
+    flex-grow: 1;
+    overflow: scroll;
+    position: relative;
+  }
+  .flexfix{
+    flex-shrink: 0;
+    position: relative;
+  }
+  &.flex-horizontal{
+    flex-direction: row;
+    height:100%;
+  }
+}
+
+
+//lhj开始
+.g-index{
+  display: flex;
+  flex-direction: column;
+}
+.g-inp{
+  min-height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid black;
+  flex-direction: column;
+  padding: 5px;
+}
+.g-scrollbox{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
+}
+.g-basebox{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid #8A6C4B;
+  border-radius: 0 0 10px 10px;
+  padding: 5px;
+  overflow: scroll;
+}
+.g-notflexbox{
+  width: 100%;
+  border: 1px solid #8A6C4B;
+  border-radius: 0 0 10px 10px;
+  padding: 5px;
+  flex-shrink: 0
+}
+.g-notflexbox2{
+  width: 100%;
+  border: 1px solid #8A6C4B;
+  border-radius: 10px;
+  padding: 5px;
+  flex-shrink: 0
+}
+//lhj结束
