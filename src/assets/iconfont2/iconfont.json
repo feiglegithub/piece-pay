@@ -1,0 +1,23 @@
+{
+  "id": "3249957",
+  "name": "我选的图标",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "8931858",
+      "name": "人员管理",
+      "font_class": "renyuanguanli",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "5387586",
+      "name": "箭头_上下切换",
+      "font_class": "jiantou_shangxiaqiehuan",
+      "unicode": "eb09",
+      "unicode_decimal": 60169
+    }
+  ]
+}
