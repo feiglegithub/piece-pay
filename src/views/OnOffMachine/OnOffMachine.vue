@@ -242,6 +242,7 @@ export default {
       this.$axiosApi
         .submitUnLoadAttece(id)
         .then((res) => {
+          this.$vux.loading.hide();
           let data = res.data;
           if (data.Success) {
             this.getEmployeeAttenceDataList();
@@ -253,6 +254,7 @@ export default {
           }
         })
         .catch((err) => {
+          this.$vux.loading.hide();
           this.$vux.alert.show({
             title: "异常",
             content: err.toString(),
