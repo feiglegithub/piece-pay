@@ -6,6 +6,7 @@
       style="background-color: #22292c"
     >
       上下机
+      <a slot="right" @click="onClickOffMachine">一键下机</a>
     </x-header>
 
     <div class="m-inp f-mtb5">
@@ -36,7 +37,10 @@
         <div>岗位：{{ item.PositionName }}</div>
         <div>上机时长：{{ item.LoadTime }}</div>
         <div>工站上机情况：{{ item.LoadSituation }}</div>
-        <x-button @click.native="logOut(item.WorkStationId)">下机</x-button>
+        <x-button
+          @click.native="onLogOut(item.WorkStationName, item.WorkStationId)"
+          >下机</x-button
+        >
       </div>
     </div>
 
@@ -67,13 +71,7 @@
             v-for="(item, index) in stationList"
             :key="index"
           >
-            <div
-              style="
-                text-align: left;
-                border-bottom: 1px black dotted;
-                padding-bottom: 5px;
-              "
-            >
+            <div class="check-content">
               <div>工作编码：{{ item.WorkStationCode }}</div>
               <div>工作站：{{ item.WorkStationName }}</div>
               <div>
@@ -114,6 +112,48 @@
       </div>
     </popup>
 
+    <popup v-model="showOnClickOffMachine" position="bottom" height="auto">
+      <div class="normal">
+        <div style="background-color: #305eb9; color: white; padding: 2px">
+          选择工站
+        </div>
+
+        <checker
+          v-model="selectedLogOutStations"
+          default-item-class="item-default"
+          selected-item-class="item-selected"
+          type="checkbox"
+          :radio-required="true"
+        >
+          <checker-item
+            :value="item"
+            v-for="(item, index) in myLoginStations"
+            :key="index"
+          >
+            <div class="check-content">
+              <div>工站编码：{{ item.WorkStationCode }}</div>
+              <div>工站：{{ item.WorkStationName }}</div>
+              <div>岗位：{{ item.PositionName }}</div>
+              <div>上机时长：{{ item.LoadTime }}</div>
+              <div>工站上机情况：{{ item.LoadSituation }}</div>
+            </div>
+          </checker-item>
+        </checker>
+
+        <div style="text-align: center">
+          <x-button type="default" mini @click.native="onLogOuts"
+            >下机</x-button
+          >
+          <x-button
+            type="default"
+            mini
+            @click.native="showOnClickOffMachine = false"
+            >取消</x-button
+          >
+        </div>
+      </div>
+    </popup>
+
     <confirm
       ref="confirm1"
       v-model="showChooseLogin"
@@ -121,7 +161,7 @@
       confirm-text="上机"
       @on-cancel="onCancel"
       @on-confirm="onConfirm1"
-      @on-show="onShow"
+      @on-show="onShowChooseLogin"
       @on-hide="onHide"
     >
       <div style="text-align: left; margin-bottom: 10px">
@@ -145,7 +185,7 @@
       confirm-text="上机"
       @on-cancel="onCancel"
       @on-confirm="onConfirm2"
-      @on-show="onShow"
+      @on-show="onShowToggleLogin"
       @on-hide="onHide"
       :show-confirm-button="false"
       :show-cancel-button="false"
@@ -157,20 +197,19 @@
             v-model="selectWorkStationId"
             placeholder="请选择"
             size="mini"
-            @change="onChange"
+            onChange="onChangeSelectWorkStationId"
           >
             <el-option
-              v-for="item in myLoginStations"
-              :key="item.Id"
-              :label="item.WorkStationName"
-              :value="item.WorkStationId"
-              :disabled="item.IsFull"
+              v-for="(val, key) in myLoginStations2"
+              :key="key"
+              :label="val[0].WorkStationName"
+              :value="key"
             >
             </el-option>
           </el-select>
         </div>
 
-        <div>
+        <!-- <div>
           工站编码：
           <el-select
             v-model="selectWorkStationCode"
@@ -181,34 +220,31 @@
             <el-option
               v-for="item in myLoginStations"
               :key="item.Id"
-              :label="item.PositionName"
-              :value="item.PositionId"
-              :disabled="item.IsFull"
+              :label="item.WorkStationCode"
+              :value="item.WorkStationCode"
             >
             </el-option>
           </el-select>
         </div>
 
-        <div>工站：{{ stationList[0].WorkStationName }}</div>
+        <div>工站：{{ stationList[0].WorkStationName }}</div> -->
 
-        <div>
+        <!-- <div>
           岗位：
           <el-select
             v-model="selectPositionId"
             placeholder="请选择"
             size="mini"
-            @change="onChange"
           >
             <el-option
-              v-for="item in myLoginStations.PositionDatas"
+              v-for="item in myLoginStations2[selectWorkStationId]"
               :key="item.Id"
               :label="item.PositionName"
-              :value="item.Id"
-              :disabled="item1.IsFull"
+              :value="item.PositionId"
             >
             </el-option>
           </el-select>
-        </div>
+        </div> -->
       </div>
       <x-button mini @click.native="onConfirm2">上机</x-button>
       <x-button mini @click.native="showToggleLogin = false">取消</x-button>
@@ -219,6 +255,8 @@
 export default {
   data() {
     return {
+      myLoginStations2: {},
+      showOnClickOffMachine: false,
       selectPositionId: "",
       selectWorkStationCode: "",
       showToggleLogin: false,
@@ -233,17 +271,83 @@ export default {
       myLoginStations: [],
       stationList: [],
       selectedStations: [],
+      selectedLogOutStations: [],
     };
   },
   methods: {
-    logOut(Id) {
-      this.$vux.loading.show();
+    onShowChooseLogin() {
+      this.showChooseStation = false;
+    },
 
+    onShowToggleLogin() {
+      let el = document.getElementsByClassName("weui-dialog");
+      for (const iterator of el) {
+        iterator.style.zIndex = 1000;
+      }
+
+      this.selectPositionId = "";
+      this.selectWorkStationId = "";
+      this.myLoginStations2 = {};
+      for (const iterator of this.myLoginStations) {
+        let obj = this.myLoginStations2[iterator.WorkStationId];
+
+        if (obj) {
+          obj.push(iterator);
+        } else {
+          this.myLoginStations2[iterator.WorkStationId] = [iterator];
+        }
+      }
+    },
+
+    onClickOffMachine() {
+      this.selectedLogOutStations = this.myLoginStations;
+      this.showOnClickOffMachine = true;
+    },
+
+    onLogOuts() {
+      this.showOnClickOffMachine = false;
+      let workStationNames = [];
+      let workStationIds = [];
+      for (const iterator of this.selectedLogOutStations) {
+        if (!workStationNames.includes(iterator.WorkStationName)) {
+          workStationNames.push(iterator.WorkStationName);
+        }
+        
+        workStationIds.push(iterator.WorkStationId);
+      }
+      let _this = this;
+      this.$vux.confirm.show({
+        title: "下机",
+        content: `当前已登录工站：${workStationNames}，是否下机`,
+        onCancel() {},
+        onConfirm() {
+          _this.logOut(workStationIds);
+        },
+      });
+    },
+
+    onLogOut(workStationName, workStationId) {
+      let _this = this;
+      this.$vux.confirm.show({
+        title: "下机",
+        content: `当前已登录工站：${workStationName}，是否下机`,
+        onCancel() {},
+        onConfirm() {
+          let workStationIds = [workStationId];
+          _this.logOut(workStationIds);
+        },
+      });
+    },
+
+    logOut(id) {
+      this.$vux.loading.show();
+      console.log("下机参数", id);
       this.$axiosApi
         .submitUnLoadAttece(id)
         .then((res) => {
           this.$vux.loading.hide();
           let data = res.data;
+          console.log("下机结果", data);
           if (data.Success) {
             this.getEmployeeAttenceDataList();
           } else {
@@ -279,6 +383,7 @@ export default {
               title: "错误",
               content: data.Message,
             });
+            // this.$vux.toast.text(data.Message, 'middle')
           }
         })
         .catch((err) => {
@@ -301,6 +406,9 @@ export default {
         station.PositionId = this.positionId;
         loginStations.push(station);
       }
+      this.positionId = "";
+      this.selectedStations = [];
+
       console.log("上机参数", loginStations);
       this.$axiosApi
         .submitLoadAttece(loginStations)
@@ -328,7 +436,7 @@ export default {
 
     onLogin() {
       if (this.selectedStations.length > 0 && this.positionId != "") {
-        if (this.myLoginStations.length > 1) {
+        if (this.myLoginStations.length > 0) {
           this.showChooseLogin = true;
         } else {
           this.showChooseStation = false;
@@ -400,7 +508,6 @@ export default {
           },
         });
       } else {
-        
       }
     },
 
@@ -410,16 +517,15 @@ export default {
       if (this.chooseLogin == 1) {
         this.showToggleLogin = true;
       } else {
-        this.onLogin();
+        this.showChooseStation = false;
+        this.$vux.loading.show();
+
+        this.login("");
       }
     },
 
     onConfirm2() {
-      if (
-        this.selectPositionId == "" ||
-        this.selectWorkStationCode == "" ||
-        this.selectWorkStationId == ""
-      ) {
+      if (this.selectWorkStationId == "") {
         this.$vux.alert.show({
           title: "警告",
           content: "表单字段不能为空",
@@ -465,5 +571,10 @@ export default {
 }
 .normal {
   font-size: 16px;
+}
+.check-content {
+  text-align: left;
+  border-bottom: 1px black dotted;
+  padding-bottom: 5px;
 }
 </style>
