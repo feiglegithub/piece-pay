@@ -38,7 +38,7 @@
         <div>上机时长：{{ item.LoadTime }}</div>
         <div>工站上机情况：{{ item.LoadSituation }}</div>
         <x-button
-          @click.native="onLogOut(item.WorkStationName, item.WorkStationId)"
+          @click.native="onLogOut(item.WorkStationName, item.Id)"
           >下机</x-button
         >
       </div>
@@ -135,7 +135,7 @@
               <div>工站：{{ item.WorkStationName }}</div>
               <div>岗位：{{ item.PositionName }}</div>
               <div>上机时长：{{ item.LoadTime }}</div>
-              <div>工站上机情况：{{ item.LoadSituation }}</div>
+              <!-- <div>工站上机情况：{{ item.LoadSituation }}</div> -->
             </div>
           </checker-item>
         </checker>
@@ -300,7 +300,7 @@ export default {
     },
 
     onClickOffMachine() {
-      this.selectedLogOutStations = this.myLoginStations;
+      this.selectedLogOutStations = [...this.myLoginStations]
       this.showOnClickOffMachine = true;
     },
 
@@ -313,7 +313,7 @@ export default {
           workStationNames.push(iterator.WorkStationName);
         }
         
-        workStationIds.push(iterator.WorkStationId);
+        workStationIds.push(iterator.Id);
       }
       let _this = this;
       this.$vux.confirm.show({
