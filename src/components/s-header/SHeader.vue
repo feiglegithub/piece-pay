@@ -4,7 +4,7 @@
             <span class="logotitle">索菲亞</span>
             <span class="logodesc">柜类定制专家</span>
         </div>
-        <div class="title">配件管理</div>
+        <div class="title">计件工资</div>
         <div class="back" @click="closeApp">退出</div>
     </div>
 </template>
