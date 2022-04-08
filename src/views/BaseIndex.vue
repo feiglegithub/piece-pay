@@ -11,7 +11,7 @@
         <grid-item
           class="f-flexjscen"
           @click.native="$router.push({ name: 'onOffMachine' })"
-          v-show="showCollection"
+          v-show="showOnOffMachine"
         >
           <div class="m-otherchoice">
             <div>
@@ -23,7 +23,7 @@
         <grid-item
           class="f-flexjscen"
           @click.native="$router.push({ name: 'onOffMachineManager' })"
-          v-show="false"
+          v-show="showOnOffMachineManager"
         >
           <div class="m-otherchoice">
             <div>
@@ -45,11 +45,8 @@ export default {
   data() {
     return {
       RoleController: null,
-      showCollection: false,
-      showReworkHandover: false,
-      showToolReplacement: false,
-      showReworkRecevingGood: false,
-      showReworkReceving: false,
+      showOnOffMachine: false,
+      showOnOffMachineManager: false,
     };
   },
   components: {},
@@ -64,7 +61,7 @@ export default {
     //获取app权限
     getAuthorizedAppMenus() {
       this.$axiosApi
-        .getAuthorizedAppMenus("配件管理", this.$store.getters.getUserId)
+        .getAuthorizedAppMenus("计件工资", this.$store.getters.getUserId)
         .then((res) => {
           console.log('app权限',res);
           if (res !== null) {
@@ -72,20 +69,11 @@ export default {
             console.log(this.RoleController.childs);
             this.RoleController.childs.forEach((element) => {
               console.log(element.code);
-              if (element.code == "配件采集") {
-                this.showCollection = true;
+              if (element.code == "上下机") {
+                this.showOnOffMachine = true;
               }
-              if (element.code == "配件更换") {
-                this.showToolReplacement = true;
-              }
-              if (element.code == "外发维修") {
-                this.showReworkHandover = true;
-              }
-              if (element.code == "外修接收") {
-                this.showReworkRecevingGood = true;
-              }
-              if (element.code == "配件交接") {
-                this.showReworkReceving = true;
+              if (element.code == "上下机管理" && window.cordova) {
+                this.showOnOffMachineManager = true;
               }
             });
           }
