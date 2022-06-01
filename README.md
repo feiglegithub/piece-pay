@@ -23,8 +23,8 @@
 
   供 管理人员移动查看上机情况，强制员工下机 
   
-![localhost_8081_(iPhone SE) (4)](https://user-images.githubusercontent.com/25633298/171311290-3a7cf213-d2e5-46d8-a0ac-8dd220149304.png)
+![localhost_8081_(iPhone SE) (6)](https://user-images.githubusercontent.com/25633298/171311561-6d1cdbc4-9c24-4dfa-a5cf-ed8914e145d6.png)
 
 强制下机
 
-![localhost_8081_(iPhone SE) (5)](https://user-images.githubusercontent.com/25633298/171311345-3f6b405b-83be-4fd7-8db8-4d54eaf42bb3.png)
+![localhost_8081_(iPhone SE) (7)](https://user-images.githubusercontent.com/25633298/171311593-a2fe7d1f-30c8-4f17-ac8a-c4c581ba8b95.png)
